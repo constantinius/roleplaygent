@@ -1,0 +1,22 @@
+[project]
+name = "roleplaygent-agent"
+version = "0.1.0"
+description = "AI Agent backend for a game master using openai-agent-python and FastAPI"
+authors = [
+  { name = "Your Name", email = "you@example.com" }
+]
+dependencies = [
+  "openai-agents",
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic>=2.0", # FastAPI now supports Pydantic v2
+  "python-dotenv", # optional: to load env vars
+]
+requires-python = ">= 3.12"
+
+# [project.scripts]
+# serve = "uvicorn api:app --reload --port 8000"
+
+# [build-system]
+# requires = ["setuptools"]
+# build-backend = "setuptools.build_meta"
