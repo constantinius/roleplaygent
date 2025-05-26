@@ -1,0 +1,4 @@
+{
+    "python.venvPath": "./roleplaygent-agent/.venv",
+    "python.defaultInterpreterPath": "./roleplaygent-agent/.venv/bin/python"
+}
