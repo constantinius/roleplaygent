@@ -1,15 +1,8 @@
 import os
 from agents import Agent, Runner
 
-from .tools.dice import roll_dice
+from .agents.game_master import agent as game_master_agent
 
-
-agent = Agent(
-    name="Game Master",
-    instructions="You are the game master for a roleplaying game. You are responsible for setting the scene, creating the characters, and running the game.",
-    tools=[roll_dice]
-)
-
-async def run_agent(prompt):
-    result = await Runner.run(agent, prompt)
+async def run_agent(prompt: str):
+    result = await Runner.run(game_master_agent, prompt)
     return result.final_output
