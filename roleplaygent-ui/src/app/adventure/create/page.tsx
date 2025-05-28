@@ -17,6 +17,12 @@ interface Character {
   class: Class;
 }
 
+interface World {
+  setting: string;
+  matureThemes: boolean;
+  description: string;
+}
+
 // Character name generators for each race
 const NAME_GENERATORS: Record<Race, () => string> = {
   human: () => {
@@ -65,11 +71,14 @@ export default function CreateAdventure() {
     class: CLASSES[0],
   });
 
-  const [world, setWorld] = useState({
+  const [world, setWorld] = useState<World>({
     setting: SETTINGS[0],
     matureThemes: false,
     description: '',
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleCharacterChange = (field: keyof typeof character, value: string) => {
     setCharacter(prev => ({ ...prev, [field]: value }));
@@ -92,19 +101,43 @@ export default function CreateAdventure() {
   };
 
   const generateWorldDescription = () => {
-    // TODO: Implement AI world description generation
     const generatedDescription = `A ${world.setting} world where ${character.race} ${character.class}s roam the lands. The atmosphere is ${world.matureThemes ? 'dark and mature' : 'light and adventurous'}, perfect for epic tales and grand adventures.`;
     setWorld(prev => ({ ...prev, description: generatedDescription }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual adventure creation
-    console.log('Creating adventure with:', { character, world });
-    
-    // For now, we'll use a random ID
-    const adventureId = Math.random().toString(36).substring(7);
-    router.push(`/adventure/${adventureId}`);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/games', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          character,
+          world,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create adventure');
+      }
+
+      const data = await response.json();
+      
+      // Extract the game ID from the response
+      // This assumes the game master agent returns a game ID in its response
+      const gameId = data.response.id;
+      
+      // Redirect to the new game
+      router.push(`/adventure/${gameId}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create adventure');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -112,6 +145,12 @@ export default function CreateAdventure() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Create New Adventure</h1>
+          
+          {error && (
+            <div className="mb-8 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Character Section */}
@@ -260,9 +299,10 @@ export default function CreateAdventure() {
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+                disabled={isLoading}
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Start Adventure
+                {isLoading ? 'Creating Adventure...' : 'Start Adventure'}
               </button>
             </div>
           </form>
