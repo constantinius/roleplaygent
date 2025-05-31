@@ -5,10 +5,9 @@ interface ChatInterfaceProps {
   messages: Message[];
   isLoading: boolean;
   onSendMessage: (message: string) => void;
-  gameId: string;
 }
 
-export default function ChatInterface({ messages, isLoading, onSendMessage, gameId }: ChatInterfaceProps) {
+export default function ChatInterface({ messages, isLoading, onSendMessage }: ChatInterfaceProps) {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -17,16 +16,13 @@ export default function ChatInterface({ messages, isLoading, onSendMessage, game
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isLoading) return;
 
-    // Add the original message to the UI
-    const userMessage = input;
+    const message = input.trim();
     setInput('');
-
-    // Send the prefixed message to the agent
-    onSendMessage(`Continuing story ${gameId}. ${userMessage}`);
+    await onSendMessage(message);
   };
 
   return (
@@ -50,6 +46,17 @@ export default function ChatInterface({ messages, isLoading, onSendMessage, game
             </div>
           </div>
         ))}
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4">
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+              </div>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 

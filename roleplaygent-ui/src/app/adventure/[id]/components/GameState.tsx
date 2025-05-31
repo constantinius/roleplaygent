@@ -1,22 +1,10 @@
 import { useState } from 'react';
-import { Character } from '../types';
+import { Act, Chapter, Scene, Enemy } from '../types';
 
 interface GameStateProps {
-  currentAct: {
-    title: string;
-    description: string;
-  };
-  currentChapter: {
-    title: string;
-    description: string;
-  };
-  currentScene: {
-    title: string;
-    description: string;
-    goal: string;
-    characters: Array<string | Character>;
-    enemies: string[];
-  };
+  currentAct: Act;
+  currentChapter: Chapter;
+  currentScene: Scene;
 }
 
 export default function GameState({ currentAct, currentChapter, currentScene }: GameStateProps) {
@@ -64,10 +52,8 @@ export default function GameState({ currentAct, currentChapter, currentScene }: 
             <div className="space-y-2">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">Characters</h3>
               <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
-                {currentScene.characters.map((character, index) => (
-                  <li key={index}>
-                    {typeof character === 'string' ? character : character.name}
-                  </li>
+                {currentScene.characters.map((character: string, index: number) => (
+                  <li key={index}>{character}</li>
                 ))}
               </ul>
             </div>
@@ -75,8 +61,18 @@ export default function GameState({ currentAct, currentChapter, currentScene }: 
               <div className="mt-2">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">Enemies:</p>
                 <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400">
-                  {currentScene.enemies.map((enemy, index) => (
-                    <li key={index}>{enemy}</li>
+                  {currentScene.enemies.map((enemy: Enemy, index: number) => (
+                    <li key={index}>{enemy.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {currentScene.challenges.length > 0 && (
+              <div className="mt-2">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Challenges:</p>
+                <ul className="list-disc list-inside text-sm text-gray-500 dark:text-gray-400">
+                  {currentScene.challenges.map((challenge: string, index: number) => (
+                    <li key={index}>{challenge}</li>
                   ))}
                 </ul>
               </div>

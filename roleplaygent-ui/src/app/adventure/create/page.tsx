@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Character, Player } from '../[id]/types';
 
 const RACES = ['human', 'dwarf', 'elf', 'ork', 'halfling'] as const;
 const CLASSES = ['knight', 'cleric', 'ranger', 'druid', 'wizard', 'rogue'] as const;
@@ -10,15 +11,13 @@ const SETTINGS = ['fantasy', 'dark fantasy'] as const;
 type Race = typeof RACES[number];
 type Class = typeof CLASSES[number];
 
-interface Character {
-  name: string;
-  description: string;
+interface CharacterForm extends Omit<Character, 'health' | 'strength' | 'agility' | 'intelligence' | 'charisma' | 'endurance'> {
   race: Race;
   class: Class;
 }
 
 interface World {
-  setting: string;
+  setting: typeof SETTINGS[number];
   matureThemes: boolean;
   description: string;
 }
@@ -26,29 +25,39 @@ interface World {
 // Character name generators for each race
 const NAME_GENERATORS: Record<Race, () => string> = {
   human: () => {
-    const firstNames = ['James', 'Sarah', 'Michael', 'Emma', 'William', 'Olivia', 'David', 'Sophia'];
-    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller'];
-    return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+    const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma'];
+    const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia'];
+    return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${
+      lastNames[Math.floor(Math.random() * lastNames.length)]
+    }`;
   },
   dwarf: () => {
-    const prefixes = ['Thorin', 'Balin', 'Dwalin', 'Bifur', 'Bofur', 'Bombur'];
-    const suffixes = ['Ironbeard', 'Stonefist', 'Goldaxe', 'Silverhammer', 'Bronzebeard'];
-    return `${prefixes[Math.floor(Math.random() * prefixes.length)]} ${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
+    const prefixes = ['Thorin', 'Gimli', 'Balin', 'Dwalin', 'Bifur', 'Bofur'];
+    const suffixes = ['Ironbeard', 'Stonefist', 'Goldaxe', 'Silverhammer', 'Bronzebeard', 'Steelheart'];
+    return `${prefixes[Math.floor(Math.random() * prefixes.length)]} ${
+      suffixes[Math.floor(Math.random() * suffixes.length)]
+    }`;
   },
   elf: () => {
-    const prefixes = ['Elrond', 'Galadriel', 'Legolas', 'Arwen', 'Celeborn', 'Thranduil'];
-    const suffixes = ['Moonwhisper', 'Starlight', 'Nightwind', 'Dawnbringer', 'Silverleaf'];
-    return `${prefixes[Math.floor(Math.random() * prefixes.length)]} ${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
+    const prefixes = ['Legolas', 'Elrond', 'Galadriel', 'Arwen', 'Thranduil', 'Celeborn'];
+    const suffixes = ['Moonwhisper', 'Starlight', 'Sunshadow', 'Nightwind', 'Dawnbringer', 'Eveningstar'];
+    return `${prefixes[Math.floor(Math.random() * prefixes.length)]} ${
+      suffixes[Math.floor(Math.random() * suffixes.length)]
+    }`;
   },
   ork: () => {
-    const prefixes = ['Grom', 'Thokk', 'Grimgor', 'Skarsnik', 'Azog', 'Uruk'];
-    const suffixes = ['Ironjaw', 'Skullcrusher', 'Bonebreaker', 'Bloodaxe', 'Deathfist'];
-    return `${prefixes[Math.floor(Math.random() * prefixes.length)]} ${suffixes[Math.floor(Math.random() * suffixes.length)]}`;
+    const prefixes = ['Grom', 'Thokk', 'Grimgor', 'Azog', 'Uruk', 'Snaga'];
+    const suffixes = ['Ironjaw', 'Skullcrusher', 'Bonebreaker', 'Bloodaxe', 'Deathfist', 'Warcry'];
+    return `${prefixes[Math.floor(Math.random() * prefixes.length)]} ${
+      suffixes[Math.floor(Math.random() * suffixes.length)]
+    }`;
   },
   halfling: () => {
     const firstNames = ['Bilbo', 'Frodo', 'Samwise', 'Pippin', 'Merry', 'Rosie'];
-    const lastNames = ['Baggins', 'Took', 'Brandybuck', 'Gamgee', 'Cotton'];
-    return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+    const lastNames = ['Baggins', 'Gamgee', 'Took', 'Brandybuck', 'Cotton', 'Proudfoot'];
+    return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${
+      lastNames[Math.floor(Math.random() * lastNames.length)]
+    }`;
   },
 };
 
@@ -64,9 +73,13 @@ const DESCRIPTION_TEMPLATES: Record<Class, (race: Race) => string> = {
 
 export default function CreateAdventure() {
   const router = useRouter();
-  const [character, setCharacter] = useState<Character>({
+  const [character, setCharacter] = useState<CharacterForm>({
     name: '',
     description: '',
+    appearance: '',
+    personality: '',
+    backstory: '',
+    goals: '',
     race: RACES[0],
     class: CLASSES[0],
   });
@@ -80,7 +93,7 @@ export default function CreateAdventure() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleCharacterChange = (field: keyof typeof character, value: string) => {
+  const handleCharacterChange = (field: keyof typeof character, value: string | Race | Class) => {
     setCharacter(prev => ({ ...prev, [field]: value }));
   };
 
@@ -95,6 +108,10 @@ export default function CreateAdventure() {
     setCharacter({
       name: NAME_GENERATORS[randomRace](),
       description: DESCRIPTION_TEMPLATES[randomClass](randomRace),
+      appearance: `A typical ${randomRace} ${randomClass}, with features common to their race and profession.`,
+      personality: `A ${randomRace} ${randomClass} with a strong sense of duty and honor.`,
+      backstory: `Born and raised in a ${randomRace} community, they trained as a ${randomClass} from a young age.`,
+      goals: `To become the greatest ${randomClass} in the land and bring honor to their ${randomRace} heritage.`,
       race: randomRace,
       class: randomClass,
     });
@@ -111,13 +128,25 @@ export default function CreateAdventure() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/games', {
+      // Create a full Player object with default attributes
+      const player: Player = {
+        ...character,
+        health: 100,
+        strength: 10,
+        agility: 10,
+        intelligence: 10,
+        charisma: 10,
+        endurance: 10,
+        inventory: []
+      };
+
+      const response = await fetch('/api/games', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          character,
+          character: player,
           world,
         }),
       });
@@ -127,15 +156,11 @@ export default function CreateAdventure() {
       }
 
       const data = await response.json();
-      
-      // Extract the game ID from the response
-      // This assumes the game master agent returns a game ID in its response
-      const gameId = data.response.id;
-      
-      // Redirect to the new game
-      router.push(`/adventure/${gameId}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create adventure');
+      router.push(`/adventure/${data.id}`);
+    } catch (error) {
+      console.error('Error creating adventure:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create adventure');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -143,29 +168,23 @@ export default function CreateAdventure() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Create New Adventure</h1>
-          
-          {error && (
-            <div className="mb-8 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
-              {error}
-            </div>
-          )}
-          
+
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Character Section */}
-            <section className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Character</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Character</h2>
                 <button
                   type="button"
                   onClick={randomizeCharacter}
-                  className="px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                 >
-                  Randomize Character
+                  Randomize
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -195,6 +214,62 @@ export default function CreateAdventure() {
                   />
                 </div>
 
+                <div>
+                  <label htmlFor="appearance" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Appearance
+                  </label>
+                  <textarea
+                    id="appearance"
+                    value={character.appearance}
+                    onChange={(e) => handleCharacterChange('appearance', e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    rows={3}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="personality" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Personality
+                  </label>
+                  <textarea
+                    id="personality"
+                    value={character.personality}
+                    onChange={(e) => handleCharacterChange('personality', e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    rows={3}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="backstory" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Backstory
+                  </label>
+                  <textarea
+                    id="backstory"
+                    value={character.backstory}
+                    onChange={(e) => handleCharacterChange('backstory', e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    rows={3}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="goals" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Goals
+                  </label>
+                  <textarea
+                    id="goals"
+                    value={character.goals}
+                    onChange={(e) => handleCharacterChange('goals', e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    rows={3}
+                    required
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="race" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -203,10 +278,11 @@ export default function CreateAdventure() {
                     <select
                       id="race"
                       value={character.race}
-                      onChange={(e) => handleCharacterChange('race', e.target.value)}
+                      onChange={(e) => handleCharacterChange('race', e.target.value as Race)}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      required
                     >
-                      {RACES.map(race => (
+                      {RACES.map((race) => (
                         <option key={race} value={race}>
                           {race.charAt(0).toUpperCase() + race.slice(1)}
                         </option>
@@ -221,10 +297,11 @@ export default function CreateAdventure() {
                     <select
                       id="class"
                       value={character.class}
-                      onChange={(e) => handleCharacterChange('class', e.target.value)}
+                      onChange={(e) => handleCharacterChange('class', e.target.value as Class)}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      required
                     >
-                      {CLASSES.map(cls => (
+                      {CLASSES.map((cls) => (
                         <option key={cls} value={cls}>
                           {cls.charAt(0).toUpperCase() + cls.slice(1)}
                         </option>
@@ -233,12 +310,21 @@ export default function CreateAdventure() {
                   </div>
                 </div>
               </div>
-            </section>
+            </div>
 
             {/* World Section */}
-            <section className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">World Settings</h2>
-              
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">World</h2>
+                <button
+                  type="button"
+                  onClick={generateWorldDescription}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                >
+                  Generate Description
+                </button>
+              </div>
+
               <div className="space-y-4">
                 <div>
                   <label htmlFor="setting" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -247,10 +333,11 @@ export default function CreateAdventure() {
                   <select
                     id="setting"
                     value={world.setting}
-                    onChange={(e) => handleWorldChange('setting', e.target.value)}
+                    onChange={(e) => handleWorldChange('setting', e.target.value as typeof SETTINGS[number])}
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    required
                   >
-                    {SETTINGS.map(setting => (
+                    {SETTINGS.map((setting) => (
                       <option key={setting} value={setting}>
                         {setting.charAt(0).toUpperCase() + setting.slice(1)}
                       </option>
@@ -258,16 +345,17 @@ export default function CreateAdventure() {
                   </select>
                 </div>
 
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="matureThemes"
-                    checked={world.matureThemes}
-                    onChange={(e) => handleWorldChange('matureThemes', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 rounded border-gray-300 dark:border-gray-600"
-                  />
-                  <label htmlFor="matureThemes" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                    Enable mature themes (violence, romance)
+                <div>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={world.matureThemes}
+                      onChange={(e) => handleWorldChange('matureThemes', e.target.checked)}
+                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Include Mature Themes
+                    </span>
                   </label>
                 </div>
 
@@ -275,34 +363,31 @@ export default function CreateAdventure() {
                   <label htmlFor="worldDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     World Description
                   </label>
-                  <div className="space-y-2">
-                    <textarea
-                      id="worldDescription"
-                      value={world.description}
-                      onChange={(e) => handleWorldChange('description', e.target.value)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      rows={4}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={generateWorldDescription}
-                      className="px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
-                    >
-                      Generate Description
-                    </button>
-                  </div>
+                  <textarea
+                    id="worldDescription"
+                    value={world.description}
+                    onChange={(e) => handleWorldChange('description', e.target.value)}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    rows={3}
+                    required
+                  />
                 </div>
               </div>
-            </section>
+            </div>
+
+            {error && (
+              <div className="bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 p-4 rounded-lg">
+                {error}
+              </div>
+            )}
 
             <div className="flex justify-end">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? 'Creating Adventure...' : 'Start Adventure'}
+                {isLoading ? 'Creating...' : 'Create Adventure'}
               </button>
             </div>
           </form>

@@ -1,52 +1,18 @@
 import { NextResponse } from 'next/server';
+import { GameState } from '@/app/adventure/[id]/types';
 
-interface GameState {
-    id: string;
-    adventure: {
-        title: string;
-        description: string;
-        acts: Array<{
-            title: string;
-            description: string;
-            chapters: Array<{
-                title: string;
-                description: string;
-                scenes: Array<{
-                    title: string;
-                    description: string;
-                    goal: string;
-                    characters: string[];
-                    encounter: boolean;
-                    enemies: string[];
-                }>;
-            }>;
-        }>;
+interface RouteParams {
+    params: {
+        id: string;
     };
-    player: {
-        name: string;
-        class: string;
-        level: number;
-    };
-    current_scene: {
-        act: number;
-        chapter: number;
-        scene: number;
-    };
-    log: Array<{
-        action: string;
-        result: string;
-        act: number;
-        chapter: number;
-        scene: number;
-    }>;
 }
 
 export async function GET(
     request: Request,
-    {params}, 
+    { params }: RouteParams
 ) {
     try {
-        const { id } = await params;
+        const { id } = params;
         // Call the backend API to get the game
         const response = await fetch(`http://localhost:8000/api/games/${id}`);
         if (!response.ok) {
@@ -62,8 +28,18 @@ export async function GET(
             description: game.adventure.description,
             player: {
                 name: game.player.name,
-                class: game.player.class,
-                level: game.player.level
+                description: game.player.description,
+                appearance: game.player.appearance,
+                personality: game.player.personality,
+                backstory: game.player.backstory,
+                goals: game.player.goals,
+                health: game.player.health,
+                strength: game.player.strength,
+                agility: game.player.agility,
+                intelligence: game.player.intelligence,
+                charisma: game.player.charisma,
+                endurance: game.player.endurance,
+                inventory: game.player.inventory
             },
             currentScene: {
                 act: game.current_scene.act,
