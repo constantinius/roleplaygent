@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
+import { config } from '@/config';
 import Header from './components/Header';
 import GameState from './components/GameState';
 import ChatInterface from './components/ChatInterface';
@@ -10,9 +11,8 @@ import { Message, GameState as GameStateType, PageParams } from './types';
 export default function AdventurePage({ params }: { params: Promise<PageParams> }) {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [gameState, setGameState] = useState<GameStateType | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Use React.use to handle async params
@@ -22,7 +22,7 @@ export default function AdventurePage({ params }: { params: Promise<PageParams> 
   useEffect(() => {
     const fetchGameState = async () => {
       try {
-        const response = await fetch(`/api/games/${gameId}`);
+        const response = await fetch(`${config.agentUrl}/api/games/${gameId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch game state');
         }
@@ -41,48 +41,46 @@ export default function AdventurePage({ params }: { params: Promise<PageParams> 
   }, [gameId]);
 
   const handleSendMessage = async (message: string) => {
-    setIsLoading(true);
-    // Add the original user message to the chat
-    const userMessage = message.replace(`Continuing story ${gameId}. `, '');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-
+    setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/agent', {
+      // Add user message to chat
+      const userMessage: Message = {
+        role: 'user',
+        content: message,
+      };
+      setMessages((prev) => [...prev, userMessage]);
+
+      // Send message to agent
+      const response = await fetch(`${config.agentUrl}/api/games/${gameId}/agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          prompt: message,
-        }),
+        body: JSON.stringify({ message }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        throw new Error('Failed to get response from agent');
       }
 
       const data = await response.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
-    } catch {
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' },
-      ]);
+      const agentMessage: Message = {
+        role: 'assistant',
+        content: data.response,
+      };
+      setMessages((prev) => [...prev, agentMessage]);
+    } catch (error) {
+      console.error('Error:', error);
+      // Add error message to chat
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading adventure...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -101,15 +99,22 @@ export default function AdventurePage({ params }: { params: Promise<PageParams> 
   }
 
   if (!gameState) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#f4e4bc] to-[#e6d5a7] dark:from-[#2c1810] dark:to-[#1a0f0a] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8b4513] dark:border-[#d4af37] mx-auto"></div>
+          <p className="mt-4 text-[#2c1810] dark:text-[#f4e4bc]">Loading adventure...</p>
+        </div>
+      </div>
+    );
   }
 
-  const currentAct = gameState.acts[gameState.currentScene.act];
-  const currentChapter = currentAct.chapters[gameState.currentScene.chapter];
-  const currentScene = currentChapter.scenes[gameState.currentScene.scene];
+  const currentAct = gameState.adventure.acts[gameState.current_scene.act];
+  const currentChapter = currentAct.chapters[gameState.current_scene.chapter];
+  const currentScene = currentChapter.scenes[gameState.current_scene.scene];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-[#f4e4bc] to-[#e6d5a7] dark:from-[#2c1810] dark:to-[#1a0f0a]">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
@@ -120,9 +125,8 @@ export default function AdventurePage({ params }: { params: Promise<PageParams> 
           />
           <ChatInterface
             messages={messages}
-            isLoading={isLoading}
+            isLoading={loading}
             onSendMessage={handleSendMessage}
-            gameId={gameId}
           />
         </div>
       </main>

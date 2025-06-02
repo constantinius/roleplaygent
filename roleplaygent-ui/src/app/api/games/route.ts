@@ -1,22 +1,5 @@
 import { NextResponse } from 'next/server';
-
-interface GameState {
-    id: string;
-    adventure: {
-        title: string;
-        description: string;
-    };
-    player: {
-        name: string;
-        class: string;
-        level: number;
-    };
-    current_scene: {
-        act: number;
-        chapter: number;
-        scene: number;
-    };
-}
+import { GameState } from '@/app/adventure/[id]/types';
 
 export async function GET() {
     try {
@@ -35,8 +18,18 @@ export async function GET() {
             description: game.adventure.description,
             player: {
                 name: game.player.name,
-                class: game.player.class,
-                level: game.player.level
+                description: game.player.description,
+                appearance: game.player.appearance,
+                personality: game.player.personality,
+                backstory: game.player.backstory,
+                goals: game.player.goals,
+                health: game.player.health,
+                strength: game.player.strength,
+                agility: game.player.agility,
+                intelligence: game.player.intelligence,
+                charisma: game.player.charisma,
+                endurance: game.player.endurance,
+                inventory: game.player.inventory
             },
             currentScene: {
                 act: game.current_scene.act,

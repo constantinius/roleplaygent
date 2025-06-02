@@ -1,26 +1,82 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4e4bc;
+  --foreground: #2c1810;
+  --primary: #8b4513;
+  --secondary: #654321;
+  --accent: #d4af37;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-medieval);
+  --font-mono: var(--font-medieval-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #2c1810;
+    --foreground: #f4e4bc;
+    --primary: #d4af37;
+    --secondary: #8b4513;
+    --accent: #654321;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  background-image: url('/parchment-texture.png');
+  background-repeat: repeat;
+}
+
+/* Fantasy-themed button styles */
+.btn-fantasy {
+  background: var(--primary);
+  color: var(--background);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.btn-fantasy:hover {
+  background: var(--secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Fantasy-themed input styles */
+.input-fantasy {
+  @apply w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent;
+}
+
+/* Fantasy-themed card styles */
+.card-fantasy {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode card styles */
+@media (prefers-color-scheme: dark) {
+  .card-fantasy {
+    background: rgba(44, 24, 16, 0.9);
+    border-color: var(--accent);
+  }
+  
+  .input-fantasy {
+    background: rgba(44, 24, 16, 0.9);
+    border-color: var(--accent);
+    color: var(--background);
+  }
 }

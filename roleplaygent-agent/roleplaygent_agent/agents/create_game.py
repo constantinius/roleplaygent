@@ -2,10 +2,11 @@ from agents import Agent
 
 from .adventure_generator import agent as adventure_generator_agent
 
-from ..tools.game_state import create_game
+from ..tools.create_game import create_game
 
 agent = Agent(
     name="Create Game",
+
     instructions="""
     You are an export role playing game designer. 
     You have a tool to generate a story for the players to play in. Use it to create the planned story arc for this adventure.
