@@ -100,10 +100,10 @@ export default function AdventurePage({ params }: { params: Promise<PageParams> 
 
   if (!gameState) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-[#f4e4bc] to-[#e6d5a7] dark:from-[#2c1810] dark:to-[#1a0f0a] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading adventure...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8b4513] dark:border-[#d4af37] mx-auto"></div>
+          <p className="mt-4 text-[#2c1810] dark:text-[#f4e4bc]">Loading adventure...</p>
         </div>
       </div>
     );
@@ -114,7 +114,7 @@ export default function AdventurePage({ params }: { params: Promise<PageParams> 
   const currentScene = currentChapter.scenes[gameState.current_scene.scene];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-[#f4e4bc] to-[#e6d5a7] dark:from-[#2c1810] dark:to-[#1a0f0a]">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">

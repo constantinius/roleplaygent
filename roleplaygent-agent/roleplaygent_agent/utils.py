@@ -31,7 +31,7 @@ def save_game(game_state: GameState) -> None:
     GAMES_DIR.mkdir(exist_ok=True)
 
     game_file = GAMES_DIR / f"{game_state.id}.json"
-    print(f"[save_game] Saving game state to {game_file}")
+    print(f"[save_game] Saving game state to {game_file.absolute()}")
     with open(game_file, "w") as f:
         json.dump(game_state.model_dump(), f, indent=2)
 
@@ -40,10 +40,10 @@ def load_game(game_id: str) -> Optional[GameState]:
     """Load a game state from a JSON file."""
     game_file = GAMES_DIR / f"{game_id}.json"
     if not game_file.exists():
-        print(f"[load_game] Game file not found: {game_file}")
+        print(f"[load_game] Game file not found: {game_file.absolute()}")
         return None
 
-    print(f"[load_game] Loading game state from {game_file}")
+    print(f"[load_game] Loading game state from {game_file.absolute()}")
     with open(game_file, "r") as f:
         data = json.load(f)
         return GameState.model_validate(data)

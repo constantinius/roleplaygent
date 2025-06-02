@@ -21,10 +21,8 @@ async def run_agent(game_id: str, prompt: str) -> Optional[str]:
     return result.final_output
 
 
-async def run_create_game_agent(prompt: str, character: dict) -> Optional[str]:
+async def run_create_game_agent(prompt: str, character: dict) -> Optional[tuple[GameState, str]]:
     adventure = (await Runner.run(adventure_generator_agent, input=prompt)).final_output
-
-    print(adventure)
 
     player = Player(
         name=character.get("name", ""),
@@ -43,4 +41,5 @@ async def run_create_game_agent(prompt: str, character: dict) -> Optional[str]:
     )
     game_state = GameState(adventure=adventure, player=player)
     save_game(game_state)
-    return await run_agent(game_state.id, "Start the story")
+    initial  = await run_agent(game_state.id, "Start the story")
+    return game_state, initial

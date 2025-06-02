@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Character, Player } from '../[id]/types';
+import { config } from '@/config';
 
 const RACES = ['human', 'dwarf', 'elf', 'ork', 'halfling'] as const;
 const CLASSES = ['knight', 'cleric', 'ranger', 'druid', 'wizard', 'rogue'] as const;
@@ -140,7 +141,7 @@ export default function CreateAdventure() {
         inventory: []
       };
 
-      const response = await fetch('/api/games', {
+      const response = await fetch(`${config.agentUrl}/api/games`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,20 +167,20 @@ export default function CreateAdventure() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-[#f4e4bc] to-[#e6d5a7] dark:from-[#2c1810] dark:to-[#1a0f0a]">
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Create New Adventure</h1>
+          <h1 className="text-4xl font-bold text-[#8b4513] dark:text-[#d4af37] mb-8 text-center">Create New Adventure</h1>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Character Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <div className="card-fantasy">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Character</h2>
+                <h2 className="text-2xl font-bold text-[#8b4513] dark:text-[#d4af37]">Character</h2>
                 <button
                   type="button"
                   onClick={randomizeCharacter}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                  className="btn-fantasy"
                 >
                   Randomize
                 </button>
@@ -187,7 +188,7 @@ export default function CreateAdventure() {
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     Character Name
                   </label>
                   <input
@@ -195,76 +196,82 @@ export default function CreateAdventure() {
                     id="name"
                     value={character.name}
                     onChange={(e) => handleCharacterChange('name', e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Enter character name"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="description" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     Character Description
                   </label>
                   <textarea
                     id="description"
                     value={character.description}
                     onChange={(e) => handleCharacterChange('description', e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Enter character description"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent min-h-[100px]"
                     rows={3}
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="appearance" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="appearance" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     Appearance
                   </label>
                   <textarea
                     id="appearance"
                     value={character.appearance}
                     onChange={(e) => handleCharacterChange('appearance', e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Enter character appearance"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent min-h-[100px]"
                     rows={3}
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="personality" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="personality" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     Personality
                   </label>
                   <textarea
                     id="personality"
                     value={character.personality}
                     onChange={(e) => handleCharacterChange('personality', e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Enter character personality"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent min-h-[100px]"
                     rows={3}
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="backstory" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="backstory" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     Backstory
                   </label>
                   <textarea
                     id="backstory"
                     value={character.backstory}
                     onChange={(e) => handleCharacterChange('backstory', e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Enter character backstory"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent min-h-[100px]"
                     rows={3}
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="goals" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="goals" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     Goals
                   </label>
                   <textarea
                     id="goals"
                     value={character.goals}
                     onChange={(e) => handleCharacterChange('goals', e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Enter character goals"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent min-h-[100px]"
                     rows={3}
                     required
                   />
@@ -272,14 +279,14 @@ export default function CreateAdventure() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="race" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="race" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                       Race
                     </label>
                     <select
                       id="race"
                       value={character.race}
                       onChange={(e) => handleCharacterChange('race', e.target.value as Race)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent"
                       required
                     >
                       {RACES.map((race) => (
@@ -291,14 +298,14 @@ export default function CreateAdventure() {
                   </div>
 
                   <div>
-                    <label htmlFor="class" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label htmlFor="class" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                       Class
                     </label>
                     <select
                       id="class"
                       value={character.class}
                       onChange={(e) => handleCharacterChange('class', e.target.value as Class)}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent"
                       required
                     >
                       {CLASSES.map((cls) => (
@@ -313,13 +320,13 @@ export default function CreateAdventure() {
             </div>
 
             {/* World Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <div className="card-fantasy">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">World</h2>
+                <h2 className="text-2xl font-bold text-[#8b4513] dark:text-[#d4af37]">World</h2>
                 <button
                   type="button"
                   onClick={generateWorldDescription}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                  className="btn-fantasy"
                 >
                   Generate Description
                 </button>
@@ -327,14 +334,14 @@ export default function CreateAdventure() {
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="setting" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="setting" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     Setting
                   </label>
                   <select
                     id="setting"
                     value={world.setting}
                     onChange={(e) => handleWorldChange('setting', e.target.value as typeof SETTINGS[number])}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent"
                     required
                   >
                     {SETTINGS.map((setting) => (
@@ -351,23 +358,24 @@ export default function CreateAdventure() {
                       type="checkbox"
                       checked={world.matureThemes}
                       onChange={(e) => handleWorldChange('matureThemes', e.target.checked)}
-                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-[#8b4513] dark:border-[#d4af37] text-[#8b4513] dark:text-[#d4af37] focus:ring-[#8b4513] dark:focus:ring-[#d4af37]"
                     />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc]">
                       Include Mature Themes
                     </span>
                   </label>
                 </div>
 
                 <div>
-                  <label htmlFor="worldDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <label htmlFor="worldDescription" className="block text-sm font-medium text-[#2c1810] dark:text-[#f4e4bc] mb-1">
                     World Description
                   </label>
                   <textarea
                     id="worldDescription"
                     value={world.description}
                     onChange={(e) => handleWorldChange('description', e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    placeholder="Enter world description"
+                    className="w-full px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-black dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent min-h-[100px]"
                     rows={3}
                     required
                   />
@@ -385,7 +393,7 @@ export default function CreateAdventure() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-fantasy text-lg"
               >
                 {isLoading ? 'Creating...' : 'Create Adventure'}
               </button>

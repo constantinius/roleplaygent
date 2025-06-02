@@ -26,7 +26,7 @@ export default function ChatInterface({ messages, isLoading, onSendMessage }: Ch
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <div className="card-fantasy">
       <div className="h-[600px] overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <div
@@ -38,8 +38,8 @@ export default function ChatInterface({ messages, isLoading, onSendMessage }: Ch
             <div
               className={`max-w-[80%] rounded-lg p-4 ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                  ? 'bg-[#8b4513] dark:bg-[#d4af37] text-[#f4e4bc]'
+                  : 'bg-[#f4e4bc] dark:bg-[#2c1810] text-[#2c1810] dark:text-[#f4e4bc] border-2 border-[#8b4513] dark:border-[#d4af37]'
               }`}
             >
               {message.content}
@@ -48,11 +48,11 @@ export default function ChatInterface({ messages, isLoading, onSendMessage }: Ch
         ))}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-200 dark:bg-gray-700 rounded-lg p-4">
+            <div className="bg-[#f4e4bc] dark:bg-[#2c1810] rounded-lg p-4 border-2 border-[#8b4513] dark:border-[#d4af37]">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                <div className="w-2 h-2 bg-[#8b4513] dark:bg-[#d4af37] rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-[#8b4513] dark:bg-[#d4af37] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-[#8b4513] dark:bg-[#d4af37] rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
               </div>
             </div>
           </div>
@@ -60,20 +60,20 @@ export default function ChatInterface({ messages, isLoading, onSendMessage }: Ch
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-gray-200 dark:border-gray-700 p-4">
+      <form onSubmit={handleSubmit} className="border-t-2 border-[#8b4513] dark:border-[#d4af37] p-4">
         <div className="flex space-x-4">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Describe your action..."
-            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 rounded-lg border-2 border-[#8b4513] dark:border-[#d4af37] bg-white dark:bg-[#2c1810] text-[#2c1810] dark:text-[#f4e4bc] placeholder-[#654321] dark:placeholder-[#d4af37] focus:outline-none focus:ring-2 focus:ring-[#8b4513] dark:focus:ring-[#d4af37] focus:border-transparent"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-fantasy"
           >
             Send
           </button>
