@@ -11,7 +11,7 @@ dependencies = [
   "uvicorn[standard]",
   "pydantic>=2.0", # FastAPI now supports Pydantic v2
   "python-dotenv", # optional: to load env vars
-  "sentry-sdk[fastapi]>=2.29.1",
+  "sentry-sdk[fastapi,openai]>=2.32.0",
 ]
 requires-python = ">= 3.12"
 

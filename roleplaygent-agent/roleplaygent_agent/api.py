@@ -7,6 +7,7 @@ from .utils import list_running_games, load_game
 from .agents.game_master import agent as game_master_agent
 
 import sentry_sdk
+from sentry_sdk.integrations.openai_agents import OpenAIAgentsIntegration
 
 
 sentry_sdk.init(
@@ -23,6 +24,9 @@ sentry_sdk.init(
     # Set profile_lifecycle to "trace" to automatically
     # run the profiler on when there is an active transaction
     profile_lifecycle="trace",
+    integrations=[
+        OpenAIAgentsIntegration(),
+    ],
 )
 
 
